@@ -3,41 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minesweeper</title>
+<meta name="theme-color" content="#0b1220">
+<title>Minefield — Minesweeper</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-  body { background: #1e1e2e; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-  h1 { margin-bottom: 16px; font-size: 2rem; }
-  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center; }
-  .controls button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: #45475a; color: #fff; transition: 0.2s; }
-  .controls button:hover, .controls button.active { background: #89b4fa; color: #1e1e2e; }
-  .status { display: flex; gap: 24px; margin-bottom: 16px; font-size: 1.2rem; }
-  #board { display: grid; gap: 2px; background: #313244; padding: 6px; border-radius: 8px; touch-action: manipulation; user-select: none; }
-  .cell { width: 34px; height: 34px; background: #585b70; border: none; border-radius: 4px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; }
-  .cell.revealed { background: #313244; cursor: default; }
-  .cell.mine { background: #f38ba8; }
-  .cell.n1 { color: #89b4fa; } .cell.n2 { color: #a6e3a1; } .cell.n3 { color: #f38ba8; }
-  .cell.n4 { color: #cba6f7; } .cell.n5 { color: #fab387; } .cell.n6 { color: #94e2d5; }
-  .cell.n7 { color: #f9e2af; } .cell.n8 { color: #bac2de; }
-  #msg { margin-top: 16px; font-size: 1.1rem; min-height: 1.5em; }
-  .hint { margin-top: 8px; color: #a6adc8; font-size: 0.85rem; }
+:root{color-scheme:dark;--bg:#080d18;--panel:rgba(17,27,47,.86);--panel-soft:#131f35;--line:rgba(148,163,184,.18);--text:#f8fafc;--muted:#94a3b8;--accent:#5eead4;--danger:#fb7185;--cell:#233452;--cell-hover:#304668;--cell-open:#16243c}
+*{box-sizing:border-box}body{min-width:320px;min-height:100vh;margin:0;padding:24px 18px 40px;color:var(--text);background:radial-gradient(circle at 15% 0%,rgba(45,212,191,.14),transparent 34%),radial-gradient(circle at 90% 10%,rgba(96,165,250,.12),transparent 30%),var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{width:min(100%,940px);margin:auto}.game-card{overflow:hidden;border:1px solid var(--line);border-radius:24px;background:var(--panel);box-shadow:0 24px 70px rgba(0,0,0,.35);backdrop-filter:blur(18px)}.toolbar{padding:20px;border-bottom:1px solid var(--line)}.section-label{margin:0 0 10px;color:var(--muted);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.controls button{min-height:46px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;color:var(--muted);background:var(--panel-soft);font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;transition:transform .2s,border-color .2s,background .2s,color .2s}.controls button:hover{transform:translateY(-1px);border-color:rgba(94,234,212,.55);color:var(--text)}.controls button.active{border-color:var(--accent);color:#06201e;background:var(--accent);box-shadow:0 8px 20px rgba(45,212,191,.2)}button:focus-visible{outline:3px solid rgba(94,234,212,.45);outline-offset:2px}.game-area{padding:20px}.status{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}.stat{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(19,31,53,.75)}.stat-label{display:block;margin-bottom:4px;color:var(--muted);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.stat-value{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:800}.board-wrap{overflow:auto;padding:12px;border:1px solid var(--line);border-radius:16px;background:#0b1426}#board{display:grid;width:max-content;gap:3px;margin:auto;padding:6px;border-radius:12px;background:#0a1120;touch-action:manipulation;user-select:none}.cell{width:34px;height:34px;border:1px solid rgba(148,163,184,.1);border-radius:7px;color:var(--text);background:var(--cell);font:inherit;font-size:1rem;font-weight:800;cursor:pointer;transition:background .12s,transform .12s}.cell:hover{background:var(--cell-hover);transform:scale(1.04)}.cell.revealed{border-color:transparent;color:var(--text);background:var(--cell-open);cursor:default;transform:none}.cell.mine{color:#fff;background:var(--danger)}.cell.n1{color:#60a5fa}.cell.n2{color:#4ade80}.cell.n3{color:#fb7185}.cell.n4{color:#c084fc}.cell.n5{color:#fb923c}.cell.n6{color:#2dd4bf}.cell.n7{color:#facc15}.cell.n8{color:#cbd5e1}#msg{min-height:1.5em;margin:16px 0 0;color:var(--accent);font-size:1rem;font-weight:700;text-align:center}.hint{margin:14px 0 0;color:var(--muted);font-size:.82rem;text-align:center}@media(max-width:560px){body{padding:16px 10px 28px}.game-card{border-radius:18px}.toolbar,.game-area{padding:14px}.controls{grid-template-columns:1fr}.status{gap:6px}.stat{padding:10px 8px;text-align:center}.stat-value{font-size:1.05rem}.board-wrap{margin:0 -2px;padding:6px}}
+.modal{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:rgba(3,8,18,.72);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}.modal.open{opacity:1;visibility:visible}.modal-card{width:min(100%,390px);padding:30px 24px 24px;border:1px solid var(--line);border-radius:22px;background:#111b2f;box-shadow:0 24px 80px rgba(0,0,0,.55);text-align:center;transform:translateY(12px) scale(.98);transition:transform .2s ease}.modal.open .modal-card{transform:translateY(0) scale(1)}.modal-icon{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 16px;border-radius:50%;font-size:2rem;background:rgba(94,234,212,.13)}.modal-card h2{margin:0;color:var(--text);font-size:1.6rem;letter-spacing:-.03em}.modal-card p{margin:10px 0 22px;color:var(--muted);line-height:1.5}.modal-actions{display:flex;gap:10px;justify-content:center}.modal-actions button{min-height:44px;padding:10px 18px;border:1px solid var(--line);border-radius:11px;color:var(--muted);background:var(--panel-soft);font:inherit;font-weight:700;cursor:pointer}.modal-actions .primary{border-color:var(--accent);color:#06201e;background:var(--accent)}.modal-actions button:hover{filter:brightness(1.08)}
 </style>
 </head>
 <body>
-  <h1>💣 Minesweeper</h1>
-  <div class="controls">
-    <button data-level="9,10">Mudah (9x9)</button>
-    <button data-level="16,40" class="active">Sedang (16x16)</button>
-    <button data-level="22,99">Sulit (22x22)</button>
+<main class="app">
+  <section class="game-card" aria-label="Permainan Minesweeper">
+    <div class="toolbar"><p class="section-label">Pilih tingkat kesulitan</p><div class="controls"><button type="button" data-level="9,10">Mudah <span>(9×9)</span></button><button type="button" data-level="16,40" class="active">Sedang <span>(16×16)</span></button><button type="button" data-level="22,99">Sulit <span>(22×22)</span></button></div></div>
+    <div class="game-area"><div class="status" aria-live="polite"><div class="stat"><span class="stat-label">Bendera</span><span class="stat-value" id="flags">0</span></div><div class="stat"><span class="stat-label">Bom</span><span class="stat-value" id="mines">0</span></div><div class="stat"><span class="stat-label">Waktu</span><span class="stat-value"><span id="timer">0</span>s</span></div></div><div class="board-wrap"><div id="board" aria-label="Papan permainan"></div></div><div id="msg" role="status" hidden></div><p class="hint">Klik untuk membuka · Klik kanan atau tekan lama untuk memasang bendera</p></div>
+  </section>
+</main>
+<div id="gameModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+  <div class="modal-card">
+    <div id="modalIcon" class="modal-icon">🎉</div>
+    <h2 id="modalTitle">Permainan selesai</h2>
+    <p id="modalText"></p>
+    <div class="modal-actions"><button id="closeModal" type="button">Tutup</button><button id="modalAction" class="primary" type="button">Main lagi</button></div>
   </div>
-  <div class="status">
-    <span>🚩 <span id="flags">0</span></span>
-    <span>💣 <span id="mines">0</span></span>
-    <span>⏱️ <span id="timer">0</span>s</span>
-  </div>
-  <div id="board"></div>
-  <div id="msg"></div>
-  <div class="hint">Klik kiri: buka sel · Klik kanan / tahan (mobile): pasang bendera</div>
+</div>
 <script src="game.js"></script>
 </body>
 </html>

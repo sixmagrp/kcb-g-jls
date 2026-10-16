@@ -7,6 +7,24 @@ const minesEl = document.getElementById('mines');
 const flagsEl = document.getElementById('flags');
 const timerEl = document.getElementById('timer');
 const msgEl = document.getElementById('msg');
+const gameModal = document.getElementById('gameModal');
+const modalIcon = document.getElementById('modalIcon');
+const modalTitle = document.getElementById('modalTitle');
+const modalText = document.getElementById('modalText');
+const closeModalBtn = document.getElementById('closeModal');
+const modalActionBtn = document.getElementById('modalAction');
+
+closeModalBtn.addEventListener('click', closeGameModal);
+modalActionBtn.addEventListener('click', () => {
+  closeGameModal();
+  init();
+});
+gameModal.addEventListener('click', e => {
+  if (e.target === gameModal) closeGameModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && gameModal.classList.contains('open')) closeGameModal();
+});
 
 document.querySelectorAll('.controls button').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -19,6 +37,7 @@ document.querySelectorAll('.controls button').forEach(btn => {
 
 function init() {
   clearInterval(timerInt);
+  closeGameModal();
   seconds = 0; timerEl.textContent = 0;
   gameOver = false; started = false; msgEl.textContent = '';
   board = Array.from({length: size}, () => Array(size).fill(0));
@@ -114,7 +133,7 @@ function lose() {
     for (let c = 0; c < size; c++)
       if (board[r][c] === -1) revealed[r][c] = true;
   render();
-  msgEl.textContent = '💥 Game Over! Pilih level untuk main lagi.';
+  showGameModal('💥', 'Game Over', 'Kamu menekan bom. Coba lagi dan gunakan petunjuk angka dengan lebih hati-hati.');
 }
 
 function checkWin() {
@@ -124,8 +143,20 @@ function checkWin() {
       if (!revealed[r][c]) hidden++;
   if (hidden === mineCount) {
     gameOver = true; clearInterval(timerInt);
-    msgEl.textContent = `🎉 Menang dalam ${seconds} detik!`;
+    showGameModal('🎉', 'Kamu menang!', `Papan berhasil dibersihkan dalam ${seconds} detik. Strategi yang bagus!`);
   }
+}
+
+function showGameModal(icon, title, text) {
+  modalIcon.textContent = icon;
+  modalTitle.textContent = title;
+  modalText.textContent = text;
+  gameModal.classList.add('open');
+  closeModalBtn.focus();
+}
+
+function closeGameModal() {
+  gameModal.classList.remove('open');
 }
 
 init();
