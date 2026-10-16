@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minesweeper</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+  body { background: #1e1e2e; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+  h1 { margin-bottom: 16px; font-size: 2rem; }
+  .controls { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center; }
+  .controls button { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: #45475a; color: #fff; transition: 0.2s; }
+  .controls button:hover, .controls button.active { background: #89b4fa; color: #1e1e2e; }
+  .status { display: flex; gap: 24px; margin-bottom: 16px; font-size: 1.2rem; }
+  #board { display: grid; gap: 2px; background: #313244; padding: 6px; border-radius: 8px; touch-action: manipulation; user-select: none; }
+  .cell { width: 34px; height: 34px; background: #585b70; border: none; border-radius: 4px; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; }
+  .cell.revealed { background: #313244; cursor: default; }
+  .cell.mine { background: #f38ba8; }
+  .cell.n1 { color: #89b4fa; } .cell.n2 { color: #a6e3a1; } .cell.n3 { color: #f38ba8; }
+  .cell.n4 { color: #cba6f7; } .cell.n5 { color: #fab387; } .cell.n6 { color: #94e2d5; }
+  .cell.n7 { color: #f9e2af; } .cell.n8 { color: #bac2de; }
+  #msg { margin-top: 16px; font-size: 1.1rem; min-height: 1.5em; }
+  .hint { margin-top: 8px; color: #a6adc8; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <h1>💣 Minesweeper</h1>
+  <div class="controls">
+    <button data-level="9,10">Mudah (9x9)</button>
+    <button data-level="16,40" class="active">Sedang (16x16)</button>
+    <button data-level="22,99">Sulit (22x22)</button>
+  </div>
+  <div class="status">
+    <span>🚩 <span id="flags">0</span></span>
+    <span>💣 <span id="mines">0</span></span>
+    <span>⏱️ <span id="timer">0</span>s</span>
+  </div>
+  <div id="board"></div>
+  <div id="msg"></div>
+  <div class="hint">Klik kiri: buka sel · Klik kanan / tahan (mobile): pasang bendera</div>
+<script src="game.js"></script>
+</body>
+</html>
