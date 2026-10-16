@@ -49,14 +49,26 @@ function init() {
 }
 
 function placeMines(safeR, safeC) {
-  let placed = 0;
-  while (placed < mineCount) {
-    const r = Math.floor(Math.random() * size);
-    const c = Math.floor(Math.random() * size);
-    if (board[r][c] === -1) continue;
-    if (Math.abs(r - safeR) <= 1 && Math.abs(c - safeC) <= 1) continue; // zona aman klik pertama
-    board[r][c] = -1; placed++;
+  const candidates = [];
+
+  for (let r = 0; r < size; r++)
+    for (let c = 0; c < size; c++) {
+      const inSafeZone = Math.abs(r - safeR) <= 1 && Math.abs(c - safeC) <= 1;
+      if (!inSafeZone && !flagged[r][c]) candidates.push([r, c]);
+    }
+
+  // Fisher-Yates menghasilkan urutan acak tanpa duplikasi dan tanpa random-loop.
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
   }
+
+  const minesToPlace = Math.min(mineCount, candidates.length);
+  for (let i = 0; i < minesToPlace; i++) {
+    const [r, c] = candidates[i];
+    board[r][c] = -1;
+  }
+
   for (let r = 0; r < size; r++)
     for (let c = 0; c < size; c++) {
       if (board[r][c] === -1) continue;
@@ -99,7 +111,7 @@ function render() {
 }
 
 function reveal(r, c) {
-  if (gameOver || flagged[r][c] || revealed[r][c]) return;
+  if (gameOver || r < 0 || r >= size || c < 0 || c >= size || flagged[r][c] || revealed[r][c]) return;
   if (!started) { placeMines(r, c); started = true; startTimer(); }
   if (board[r][c] === -1) return lose();
   flood(r, c);
@@ -108,16 +120,26 @@ function reveal(r, c) {
 }
 
 function flood(r, c) {
-  if (r < 0 || r >= size || c < 0 || c >= size || revealed[r][c] || flagged[r][c]) return;
-  revealed[r][c] = true;
-  if (board[r][c] === 0)
+  const queue = [[r, c]];
+  let index = 0;
+
+  while (index < queue.length) {
+    const [currentR, currentC] = queue[index++];
+    if (currentR < 0 || currentR >= size || currentC < 0 || currentC >= size) continue;
+    if (revealed[currentR][currentC] || flagged[currentR][currentC]) continue;
+    if (board[currentR][currentC] === -1) continue;
+
+    revealed[currentR][currentC] = true;
+    if (board[currentR][currentC] !== 0) continue;
+
     for (let dr = -1; dr <= 1; dr++)
       for (let dc = -1; dc <= 1; dc++)
-        flood(r + dr, c + dc);
+        if (dr !== 0 || dc !== 0) queue.push([currentR + dr, currentC + dc]);
+  }
 }
 
 function toggleFlag(r, c) {
-  if (gameOver || revealed[r][c]) return;
+  if (gameOver || r < 0 || r >= size || c < 0 || c >= size || revealed[r][c]) return;
 
   const flagCount = flagged.flat().filter(Boolean).length;
   if (!flagged[r][c] && flagCount >= mineCount) return;
